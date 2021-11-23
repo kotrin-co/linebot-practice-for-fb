@@ -3,6 +3,9 @@ const express = require('express');
 const line = require('@line/bot-sdk');
 require('dotenv').config();
 
+// フレックスメッセージを別ファイルから読み込む
+// const { testFlex } = require("./flexMessages/testFlex");
+
 // // firestoreとstorage利用時
 // const admin = require('firebase-admin');
 // admin.initializeApp();
@@ -72,6 +75,7 @@ const handleMessageEvent = async (ev) => {
   }
 
   if (text === "フレックス") {
+    // const flexMessage = testFlex();
     const flexMessage = {
       "type": "flex",
       "altText": "テストメッセージ",
@@ -129,7 +133,6 @@ const handleMessageEvent = async (ev) => {
       },
     };
     return client.replyMessage(ev.replyToken, flexMessage);
-
   } else {
     return client.replyMessage(ev.replyToken, {
       type: "text",
@@ -138,7 +141,47 @@ const handleMessageEvent = async (ev) => {
   }
 };
 
-exports.app = functions.region('asia-northeast1').https.onRequest(app);
+// // ポストバックイベント
+// const handlePostbackEvent = (ev) => {
+//   const data = ev.postback.data;
+//   const replyToken = ev.replyToken;
+
+//   if (data === "no") {
+//     return client.replyMessage(replyToken, {
+//       type: "text",
+//       text: "あなたはNoを押しました！！",
+//     });
+//   }
+
+//   if (data === "date") {
+//     const selectedDate = ev.postback.params.datetime;
+//     return client.replyMessage(ev.replyToken, {
+//       type: "text",
+//       text: selectedDate,
+//     });
+//   }
+// };
+
+// // フォローイベント
+// const handleFollowEvent = (ev) => {
+//   client.getProfile(ev.source.userId)
+//       .then((profile) => {
+//         const name = profile.displayName;
+//         const lineId = ev.source.userId;
+//         db
+//           .collection("users")
+//           .doc(lineId)
+//           .set({
+//             name: name,
+//           });
+//         client.replyMessage(ev.replyToken, {
+//           type: "text",
+//           text: `${name}さん友だち追加ありがとうございます！`,
+//         });
+//       });
+// };
+
+exports.app = functions.region("asia-northeast1").https.onRequest(app);
 
 // // スリープ防止用
 // exports.scheduledFunction = functions.region('asia-northeast2').pubsub.schedule('every 1 minutes').onRun(async(context) => {
